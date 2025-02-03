@@ -1,4 +1,4 @@
-package com.study.worknest
+package com.study.worknest.fragments
 
 import android.os.Build
 import android.os.Bundle
@@ -9,6 +9,10 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.study.worknest.R
+import com.study.worknest.data.Task
+import com.study.worknest.adapters.CalendarAdapter
+import com.study.worknest.adapters.TaskAdapter
 import java.time.LocalDate
 
 class HomeFragment: Fragment() {

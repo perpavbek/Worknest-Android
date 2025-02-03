@@ -1,9 +1,14 @@
-package com.study.worknest
+package com.study.worknest.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.study.worknest.R
+import com.study.worknest.fragments.HomeFragment
+import com.study.worknest.fragments.ProfileFragment
+import com.study.worknest.fragments.ProjectsFragment
+import com.study.worknest.fragments.TeamsFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

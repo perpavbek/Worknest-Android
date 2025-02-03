@@ -1,13 +1,13 @@
-package com.study.worknest
+package com.study.worknest.adapters
 
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import com.study.worknest.R
 import java.time.LocalDate
 
 class CalendarAdapter(

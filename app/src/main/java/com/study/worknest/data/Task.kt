@@ -1,4 +1,4 @@
-package com.study.worknest
+package com.study.worknest.data
 
 import java.time.LocalDate
 
