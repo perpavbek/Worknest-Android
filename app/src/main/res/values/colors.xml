@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="main_blue">#00BBFF</color>
+    <color name="dark_blue">#0781AB</color>
+    <color name="gradient_background_blue_start">#378DDD</color>
+    <color name="gradient_background_blue_end">#37CCDD</color>
+    <color name="gradient_red_start">#FF4242</color>
+    <color name="gradient_red_end">#F22323</color>
+    <color name="gradient_yellow_start">#FFB742</color>
+    <color name="gradient_yellow_end">#FFA600</color>
+    <color name="gradient_green_start">#42FF91</color>
+    <color name="gradient_green_end">#23F280</color>
+    <color name="gradient_blue_start">#42C0FF</color>
+    <color name="gradient_blue_end">#00BBFF</color>
+    <color name="light_blue">#6CD3FF</color>
+    <color name="background_blue">#EDFDFF</color>
+</resources>
