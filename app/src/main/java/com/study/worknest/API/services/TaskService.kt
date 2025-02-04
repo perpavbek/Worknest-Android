@@ -7,6 +7,7 @@ import com.study.worknest.data.Task
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDate
 
 class TaskService private constructor() {
     companion object{
@@ -27,6 +28,25 @@ class TaskService private constructor() {
                     callback(mutableListOf())
                 }
             })
+        }
+        fun getTasksByDate(context: Context?, date: LocalDate, callback: (MutableList<Task>) -> Unit) {
+            fetchTasks(context) { fetchedTasks ->
+                val filteredTasks = fetchedTasks?.filter {
+                    it.deadline == date
+                }?.toMutableList() ?: mutableListOf()
+
+                callback(filteredTasks)
+            }
+        }
+        fun getTaskDates(context: Context?, callback: (MutableList<LocalDate>) -> Unit) {
+            fetchTasks(context) { fetchedTasks ->
+                val dates = fetchedTasks
+                    ?.mapNotNull { it.deadline }
+                    ?.distinct()
+                    ?.toMutableList()
+                    ?: mutableListOf()
+                callback(dates)
+            }
         }
     }
 }
