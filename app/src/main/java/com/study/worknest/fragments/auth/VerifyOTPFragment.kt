@@ -33,7 +33,6 @@ class VerifyOTPFragment: Fragment() {
             if (username != null && otp.isNotEmpty()) {
                 AuthService.verifyOTP(OTPData(username, otp), requireContext()) { tokenResponse ->
                     if (tokenResponse != null) {
-                        Toast.makeText(requireContext(), "Вход выполнен успешно!", Toast.LENGTH_SHORT).show()
                         TokenManager.getInstance(requireContext()).saveTokens(tokenResponse)
                         val intent = Intent(requireContext(), MainActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -41,11 +40,11 @@ class VerifyOTPFragment: Fragment() {
 
                         requireActivity().finish()
                     } else {
-                        Toast.makeText(requireContext(), "Ошибка входа. Проверьте данные.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Verifying code error", Toast.LENGTH_SHORT).show()
                     }
                 }
             } else {
-                Toast.makeText(requireContext(), "Заполните все поля", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Write Code", Toast.LENGTH_SHORT).show()
             }
         }
     }

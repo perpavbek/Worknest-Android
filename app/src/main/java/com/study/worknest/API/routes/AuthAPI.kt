@@ -6,6 +6,7 @@ import com.study.worknest.data.auth.TokenResponse
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 
@@ -15,4 +16,7 @@ interface AuthAPI {
 
     @POST("auth/verify-otp")
     fun verifyOtp(@Body data: OTPData): Call<TokenResponse?>
+
+    @POST("auth/refresh")
+    fun refreshToken(): Call<TokenResponse?>
 }

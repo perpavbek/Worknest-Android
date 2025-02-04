@@ -16,6 +16,7 @@ import com.study.worknest.adapters.CalendarAdapter
 import com.study.worknest.adapters.TaskAdapter
 import java.time.LocalDate
 
+
 class HomeFragment: Fragment() {
     private lateinit var taskList: RecyclerView
     private lateinit var calendar: RecyclerView
@@ -32,25 +33,31 @@ class HomeFragment: Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         taskList = view.findViewById(R.id.taskList)
         calendar = view.findViewById(R.id.calendar)
         val dates = mutableListOf(LocalDate.now(), LocalDate.now())
-        TaskService.fetchTasks(requireContext()) { fetchedTasks ->
-            if (!fetchedTasks.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), fetchedTasks[0].name, Toast.LENGTH_SHORT).show()
+        val layoutManager = object : LinearLayoutManager(requireContext()) {
+            override fun canScrollVertically(): Boolean {
+                return false
+            }
+        }
+        taskList.layoutManager = layoutManager
+        taskList.isNestedScrollingEnabled = false
 
-                taskList.layoutManager = LinearLayoutManager(requireContext())
-                taskAdapter = TaskAdapter(fetchedTasks)
-                taskList.adapter = taskAdapter
-            } else {
-                Toast.makeText(requireContext(), "Нет доступных задач", Toast.LENGTH_SHORT).show()
+        TaskService.fetchTasks(requireContext()) { fetchedTasks ->
+            if (isAdded && context != null) {
+                if (!fetchedTasks.isNullOrEmpty()) {
+                    taskAdapter = TaskAdapter(fetchedTasks)
+                    taskList.adapter = taskAdapter
+                } else {
+                    Toast.makeText(context, "You don't have tasks", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
         calendar.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         calendarAdapter = CalendarAdapter(dates){date ->
-            Toast.makeText(requireContext(), date.dayOfMonth.toString(), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, date.dayOfMonth.toString(), Toast.LENGTH_SHORT).show()
         }
         calendar.adapter = calendarAdapter
     }

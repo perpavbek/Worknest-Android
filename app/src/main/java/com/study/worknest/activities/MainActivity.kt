@@ -19,16 +19,18 @@ class MainActivity : AppCompatActivity() {
 
         val token = APIService.getInstance(this)?.getCookieJar()?.getTokenFromCookies()
         if (token.isNullOrEmpty()) {
-            Toast.makeText(this, "Token Error", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please log in again", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, AuthActivity::class.java))
             finish()
         }
 
         setContentView(R.layout.activity_main)
-
-        loadFragment(HomeFragment())
+        if(savedInstanceState == null){
+            loadFragment(HomeFragment())
+        }
 
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {

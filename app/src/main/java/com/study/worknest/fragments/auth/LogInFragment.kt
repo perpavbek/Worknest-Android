@@ -32,7 +32,6 @@ class LogInFragment: Fragment() {
             if (username.isNotEmpty() && password.isNotEmpty()) {
                 AuthService.logIn(username, password, requireContext()) { isSuccess ->
                     if (isSuccess) {
-                        Toast.makeText(requireContext(), "Вход выполнен успешно!", Toast.LENGTH_SHORT).show()
                         val bundle = Bundle().apply {
                             putString("USERNAME", username)
                         }
@@ -44,11 +43,11 @@ class LogInFragment: Fragment() {
                             .addToBackStack(null)
                             .commit()
                     } else {
-                        Toast.makeText(requireContext(), "Ошибка входа. Проверьте данные.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), "Login error", Toast.LENGTH_SHORT).show()
                     }
                 }
             } else {
-                Toast.makeText(requireContext(), "Заполните все поля", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Fill all labels", Toast.LENGTH_SHORT).show()
             }
         }
     }

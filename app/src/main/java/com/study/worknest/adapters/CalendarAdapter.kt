@@ -1,5 +1,6 @@
 package com.study.worknest.adapters
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -28,6 +29,7 @@ class CalendarAdapter(
         return DateVewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: DateVewHolder, position: Int) {
         val inflater = LayoutInflater.from(holder.itemView.context)
