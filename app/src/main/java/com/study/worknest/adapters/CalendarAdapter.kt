@@ -6,15 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.study.worknest.R
 import java.time.LocalDate
 
 class CalendarAdapter(
-    private var dates: MutableList<LocalDate>
+    private var dates: MutableList<LocalDate>,
+    private val onClickDate: (LocalDate) -> Unit
 ) : RecyclerView.Adapter<CalendarAdapter.DateVewHolder>() {
 
     class DateVewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val layout: ConstraintLayout = itemView.findViewById(R.id.date_item)
         val day: TextView = itemView.findViewById(R.id.day)
         val weekDay: TextView = itemView.findViewById(R.id.week_day)
         val month: TextView = itemView.findViewById(R.id.month)
@@ -32,6 +35,9 @@ class CalendarAdapter(
         holder.day.text = date.dayOfMonth.toString()
         holder.weekDay.text = date.dayOfWeek.toString()
         holder.month.text = date.month.toString()
+        holder.layout.setOnClickListener{
+            onClickDate(date)
+        }
     }
 
     override fun getItemCount(): Int = dates.size

@@ -1,9 +1,12 @@
 package com.study.worknest.activities
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.study.worknest.API.APIService
 import com.study.worknest.R
 import com.study.worknest.fragments.HomeFragment
 import com.study.worknest.fragments.ProfileFragment
@@ -13,12 +16,19 @@ import com.study.worknest.fragments.TeamsFragment
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val token = APIService.getInstance(this)?.getCookieJar()?.getTokenFromCookies()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(this, "Token Error", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, AuthActivity::class.java))
+            finish()
+        }
+
         setContentView(R.layout.activity_main)
 
         loadFragment(HomeFragment())
 
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigation)
-
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {

@@ -5,12 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.study.worknest.API.services.TaskService
 import com.study.worknest.R
-import com.study.worknest.data.Task
 import com.study.worknest.adapters.CalendarAdapter
 import com.study.worknest.adapters.TaskAdapter
 import java.time.LocalDate
@@ -35,15 +36,22 @@ class HomeFragment: Fragment() {
         taskList = view.findViewById(R.id.taskList)
         calendar = view.findViewById(R.id.calendar)
         val dates = mutableListOf(LocalDate.now(), LocalDate.now())
-        val task = Task(null, "Name of task", 2, "Description", "In Progress", "Low", LocalDate.now(), 2, 2)
-        val tasks = mutableListOf(task, task, task)
+        TaskService.fetchTasks(requireContext()) { fetchedTasks ->
+            if (!fetchedTasks.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), fetchedTasks[0].name, Toast.LENGTH_SHORT).show()
 
-        taskList.layoutManager = LinearLayoutManager(requireContext())
-        taskAdapter = TaskAdapter(tasks)
-        taskList.adapter = taskAdapter
+                taskList.layoutManager = LinearLayoutManager(requireContext())
+                taskAdapter = TaskAdapter(fetchedTasks)
+                taskList.adapter = taskAdapter
+            } else {
+                Toast.makeText(requireContext(), "Нет доступных задач", Toast.LENGTH_SHORT).show()
+            }
+        }
 
         calendar.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        calendarAdapter = CalendarAdapter(dates)
+        calendarAdapter = CalendarAdapter(dates){date ->
+            Toast.makeText(requireContext(), date.dayOfMonth.toString(), Toast.LENGTH_SHORT).show()
+        }
         calendar.adapter = calendarAdapter
     }
 }
