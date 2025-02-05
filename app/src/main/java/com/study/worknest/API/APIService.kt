@@ -10,6 +10,7 @@ import com.study.worknest.API.cookie.PersistentCookieJar
 import com.study.worknest.API.routes.AuthAPI
 import com.study.worknest.API.routes.ProjectsAPI
 import com.study.worknest.API.routes.TasksAPI
+import com.study.worknest.API.routes.TeamsAPI
 import com.study.worknest.data.auth.TokenResponse
 import com.study.worknest.utils.TokenManager
 import okhttp3.Authenticator
@@ -101,6 +102,10 @@ class APIService private constructor(context: Context) {
 
     fun getProjectsAPI(): ProjectsAPI {
         return mRetrofit.create(ProjectsAPI::class.java)
+    }
+
+    fun getTeamsAPI(): TeamsAPI {
+        return mRetrofit.create(TeamsAPI::class.java)
     }
 
     fun getCookieJar(): PersistentCookieJar {

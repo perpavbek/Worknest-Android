@@ -29,5 +29,23 @@ class ProjectService private constructor() {
                 }
             })
         }
+        fun getProjectById(context: Context, projectId: Int, callback: (Project?) -> Unit){
+            val apiService = APIService.getInstance(context)?.getProjectsAPI()
+            apiService?.getProjectById(projectId)?.enqueue(object : Callback<Project> {
+                override fun onResponse(call: Call<Project>, response: Response<Project>) {
+                    if (response.isSuccessful) {
+                        callback(response.body())
+                    } else {
+                        Log.e("ProjectService", "Error: ${response.code()}")
+                        callback(null)
+                    }
+                }
+
+                override fun onFailure(call: Call<Project>, t: Throwable) {
+                    Log.e("ProjectService", "Network Error: ${t.message}")
+                    callback(null)
+                }
+            })
+        }
     }
 }
