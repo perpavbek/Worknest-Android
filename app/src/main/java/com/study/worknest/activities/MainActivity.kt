@@ -12,6 +12,7 @@ import com.study.worknest.fragments.HomeFragment
 import com.study.worknest.fragments.ProfileFragment
 import com.study.worknest.fragments.ProjectsFragment
 import com.study.worknest.fragments.TeamsFragment
+import com.study.worknest.fragments.dialogs.CreateElementDialogFragment
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +49,11 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_profile -> {
                     loadFragment(ProfileFragment())
                     true
+                }
+                R.id.nav_create -> {
+                    val dialog = CreateElementDialogFragment.newInstance()
+                    dialog.show(supportFragmentManager, "CreateElementDialog")
+                    false
                 }
                 else -> false
             }

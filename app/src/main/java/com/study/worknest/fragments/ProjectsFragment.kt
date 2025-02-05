@@ -9,10 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.study.worknest.API.services.ProjectService
-import com.study.worknest.API.services.TaskService
 import com.study.worknest.R
 import com.study.worknest.adapters.ProjectAdapter
-import com.study.worknest.adapters.TaskAdapter
 
 class ProjectsFragment: Fragment() {
     private lateinit var projectAdapter: ProjectAdapter

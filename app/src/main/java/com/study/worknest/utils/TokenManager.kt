@@ -1,48 +1,60 @@
 package com.study.worknest.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKeys
+import android.util.Base64
 import com.study.worknest.data.auth.TokenResponse
+import org.json.JSONObject
 
-class TokenManager private constructor(context: Context) {
+class TokenManager private constructor(private val context: Context) {
 
-    private val masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
-    private val sharedPreferences = EncryptedSharedPreferences.create(
-        "secure_prefs",
-        masterKeyAlias,
-        context.applicationContext,
-        EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-        EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-    )
+    private val sharedPreferencesManager = SharedPreferencesManager.getInstance(context)
 
     fun saveTokens(tokenResponse: TokenResponse) {
-        sharedPreferences.edit().apply {
-            putString("ACCESS_TOKEN", tokenResponse.accessToken)
-            putString("REFRESH_TOKEN", tokenResponse.refreshToken)
-            apply()
-        }
+        val tokens: MutableMap<String, String> = mutableMapOf(
+            "ACCESS_TOKEN" to tokenResponse.accessToken,
+            "REFRESH_TOKEN" to (tokenResponse.refreshToken ?: "")
+        )
+        sharedPreferencesManager.saveData(tokens)
     }
 
     fun getAccessToken(): String? {
-        return sharedPreferences.getString("ACCESS_TOKEN", null)
+        return sharedPreferencesManager.getData("ACCESS_TOKEN")
     }
 
     fun getRefreshToken(): String? {
-        return sharedPreferences.getString("REFRESH_TOKEN", null)
+        return sharedPreferencesManager.getData("REFRESH_TOKEN")
     }
 
     fun clearTokens() {
-        sharedPreferences.edit().clear().apply()
+        sharedPreferencesManager.clearData()
+    }
+
+    fun getTokenData(): JSONObject? {
+        return try {
+            val accessToken = getAccessToken() ?: return null
+            val parts = accessToken.split(".")
+            if (parts.size != 3) return null
+
+            val payload = parts[1]
+            val decodedBytes = Base64.decode(payload, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP)
+            val decodedPayload = String(decodedBytes, Charsets.UTF_8)
+
+            JSONObject(decodedPayload)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     companion object {
+        @SuppressLint("StaticFieldLeak")
         @Volatile
         private var instance: TokenManager? = null
 
         fun getInstance(context: Context): TokenManager {
             return instance ?: synchronized(this) {
-                instance ?: TokenManager(context).also { instance = it }
+                instance ?: TokenManager(context.applicationContext).also { instance = it }
             }
         }
     }

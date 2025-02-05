@@ -1,6 +1,7 @@
 package com.study.worknest.fragments.auth
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import com.study.worknest.API.services.AuthService
 import com.study.worknest.R
 import com.study.worknest.activities.MainActivity
 import com.study.worknest.data.auth.OTPData
+import com.study.worknest.utils.SharedPreferencesManager
 import com.study.worknest.utils.TokenManager
 
 class VerifyOTPFragment: Fragment() {
@@ -34,6 +36,12 @@ class VerifyOTPFragment: Fragment() {
                 AuthService.verifyOTP(OTPData(username, otp), requireContext()) { tokenResponse ->
                     if (tokenResponse != null) {
                         TokenManager.getInstance(requireContext()).saveTokens(tokenResponse)
+                        val tokenData = TokenManager.getInstance(requireContext()).getTokenData()
+                        tokenData?.let {
+                            val dataObject = it.getJSONObject("data")
+                            val userId = dataObject.getString("user_id")
+                            SharedPreferencesManager.getInstance(requireContext()).saveData(mutableMapOf("USER_ID" to userId))
+                        }
                         val intent = Intent(requireContext(), MainActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)

@@ -11,7 +11,9 @@ import com.study.worknest.API.routes.AuthAPI
 import com.study.worknest.API.routes.ProjectsAPI
 import com.study.worknest.API.routes.TasksAPI
 import com.study.worknest.API.routes.TeamsAPI
+import com.study.worknest.API.routes.UsersAPI
 import com.study.worknest.data.auth.TokenResponse
+import com.study.worknest.utils.SharedPreferencesManager
 import com.study.worknest.utils.TokenManager
 import okhttp3.Authenticator
 import okhttp3.Interceptor
@@ -31,6 +33,8 @@ class APIService private constructor(context: Context) {
     private val BASE_URL = "http://37.151.225.71:5000/api/"
     private val mRetrofit: Retrofit
     private val cookieJar = PersistentCookieJar(context)
+    private val sharedPreferences: SharedPreferencesManager = SharedPreferencesManager.getInstance(context)
+
     init {
         val interceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -54,7 +58,6 @@ class APIService private constructor(context: Context) {
 
             synchronized(this) {
                 val newAccessToken = refreshAccessToken(context)
-
                 return@Authenticator if (newAccessToken != null) {
                     response.request().newBuilder()
                         .header("Authorization", "Bearer $newAccessToken")
@@ -108,6 +111,10 @@ class APIService private constructor(context: Context) {
         return mRetrofit.create(TeamsAPI::class.java)
     }
 
+    fun getUsersAPI(): UsersAPI {
+        return mRetrofit.create(UsersAPI::class.java)
+    }
+
     fun getCookieJar(): PersistentCookieJar {
         return cookieJar
     }
@@ -132,6 +139,12 @@ class APIService private constructor(context: Context) {
                 if (!newAccessToken.isNullOrEmpty() && !newRefreshToken.isNullOrEmpty()) {
                     Log.d("", newAccessToken)
                     TokenManager.getInstance(context).saveTokens(refreshResponse.body()!!)
+                    val tokenData = TokenManager.getInstance(context).getTokenData()
+                    tokenData?.let {
+                        val dataObject = it.getJSONObject("data")
+                        val userId = dataObject.getString("user_id")
+                        SharedPreferencesManager.getInstance(context).saveData(mutableMapOf("USER_ID" to userId))
+                    }
                     newAccessToken
                 } else {
                     null
