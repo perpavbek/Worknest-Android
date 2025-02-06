@@ -1,13 +1,10 @@
-package com.study.worknest.data
+package com.study.worknest.data.requests
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import java.time.LocalDate
 
-class Task private constructor(
-    @SerializedName("task_id")
-    @Expose
-    var taskId: Int? = 0,
+class TaskRequest private constructor(
 
     @SerializedName("name")
     @Expose
@@ -15,7 +12,7 @@ class Task private constructor(
 
     @SerializedName("project_id")
     @Expose
-    var projectId: Int? = 0,
+    var projectId: Int? = null,
 
     @SerializedName("description")
     @Expose
@@ -35,29 +32,23 @@ class Task private constructor(
 
     @SerializedName("assigned_to")
     @Expose
-    var assignedTo: Int? = 0,
+    var assignedTo: Int? = null,
 
     @SerializedName("team_id")
     @Expose
-    var teamId: Int? = 0,
+    var teamId: Int? = null,
 
-    @SerializedName("created_at")
-    @Expose
-    var createdAt: LocalDate? = null
 ) {
     class Builder {
-        private var taskId: Int? = 0
         private var name: String? = null
-        private var projectId: Int? = 0
+        private var projectId: Int? = null
         private var description: String? = null
         private var status: String? = null
         private var priority: String? = null
         private var deadline: LocalDate? = null
-        private var assignedTo: Int? = 0
-        private var teamId: Int? = 0
-        private var createdAt: LocalDate? = null
+        private var assignedTo: Int? = null
+        private var teamId: Int? = null
 
-        fun taskId(taskId: Int?) = apply { this.taskId = taskId }
         fun name(name: String?) = apply { this.name = name }
         fun projectId(projectId: Int?) = apply { this.projectId = projectId }
         fun description(description: String?) = apply { this.description = description }
@@ -66,8 +57,10 @@ class Task private constructor(
         fun deadline(deadline: LocalDate?) = apply { this.deadline = deadline }
         fun assignedTo(assignedTo: Int?) = apply { this.assignedTo = assignedTo }
         fun teamId(teamId: Int?) = apply { this.teamId = teamId }
-        fun createdAt(createdAt: LocalDate?) = apply { this.createdAt = createdAt }
 
-        fun build() = Task(taskId, name, projectId, description, status, priority, deadline, assignedTo, teamId, createdAt)
+        fun isFilled(): Boolean{
+            return name != null && projectId != null && description != null && status != null && priority != null && deadline != null && assignedTo != null && teamId != null
+        }
+        fun build() = TaskRequest(name, projectId, description, status, priority, deadline, assignedTo, teamId)
     }
 }

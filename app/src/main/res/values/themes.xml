@@ -1,5 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Base.Theme.WorkNest" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:fontFamily">@font/konkhmer_sleokchher</item>
         <item name="colorPrimary">@color/main_blue</item>
         <item name="colorSecondaryContainer">@color/light_blue</item>
         <item name="colorSurfaceContainer">@color/white</item>

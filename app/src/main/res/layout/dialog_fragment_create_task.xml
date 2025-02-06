@@ -83,7 +83,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/element_background_shape"
                         android:fontFamily="@font/konkhmer_sleokchher"
-                        android:hint="Name"
+                        android:hint="Description"
                         android:lines="1"
                         android:paddingStart="20dp"
                         android:paddingTop="15dp"
@@ -106,14 +106,12 @@
                         android:textAlignment="textStart"
                         android:textSize="20sp" />
 
-                    <TextView
-                        android:id="@+id/et_priority"
+                    <Spinner
+                        android:id="@+id/sp_priority"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/element_background_shape"
                         android:fontFamily="@font/konkhmer_sleokchher"
-                        android:hint="Priority"
-                        android:lines="1"
                         android:paddingStart="20dp"
                         android:paddingTop="15dp"
                         android:paddingEnd="20dp"
@@ -137,14 +135,12 @@
                         android:textAlignment="textStart"
                         android:textSize="20sp" />
 
-                    <TextView
-                        android:id="@+id/et_status"
+                    <Spinner
+                        android:id="@+id/sp_status"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/element_background_shape"
                         android:fontFamily="@font/konkhmer_sleokchher"
-                        android:hint="Status"
-                        android:lines="1"
                         android:paddingStart="20dp"
                         android:paddingTop="15dp"
                         android:paddingEnd="20dp"
@@ -169,7 +165,7 @@
                         android:textSize="20sp" />
 
                     <TextView
-                        android:id="@+id/et_deadline"
+                        android:id="@+id/tw_deadline"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/element_background_shape"
@@ -199,14 +195,12 @@
                         android:textAlignment="textStart"
                         android:textSize="20sp" />
 
-                    <TextView
-                        android:id="@+id/et_project"
+                    <Spinner
+                        android:id="@+id/sp_project"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/element_background_shape"
                         android:fontFamily="@font/konkhmer_sleokchher"
-                        android:hint="Project"
-                        android:lines="1"
                         android:paddingStart="20dp"
                         android:paddingTop="15dp"
                         android:paddingEnd="20dp"
@@ -230,14 +224,41 @@
                         android:textAlignment="textStart"
                         android:textSize="20sp" />
 
-                    <TextView
-                        android:id="@+id/tw_team"
+                    <Spinner
+                        android:id="@+id/sp_team"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/element_background_shape"
                         android:fontFamily="@font/konkhmer_sleokchher"
-                        android:hint="Team"
+                        android:paddingStart="20dp"
+                        android:paddingTop="15dp"
+                        android:paddingEnd="20dp"
+                        android:paddingBottom="15dp"
+                        android:textAlignment="textStart"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/konkhmer_sleokchher"
                         android:lines="1"
+                        android:text="Assign To"
+                        android:textAlignment="textStart"
+                        android:textSize="20sp" />
+
+                    <Spinner
+                        android:id="@+id/sp_user"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/element_background_shape"
+                        android:fontFamily="@font/konkhmer_sleokchher"
                         android:paddingStart="20dp"
                         android:paddingTop="15dp"
                         android:paddingEnd="20dp"

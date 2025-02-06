@@ -4,6 +4,9 @@ import android.content.Context
 import android.util.Log
 import com.study.worknest.API.APIService
 import com.study.worknest.data.Task
+import com.study.worknest.data.requests.TaskRequest
+import com.study.worknest.data.requests.TeamRequest
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -47,6 +50,24 @@ class TaskService private constructor() {
                     ?: mutableListOf()
                 callback(dates)
             }
+        }
+        fun createTask(task: TaskRequest, context: Context, callback: (Boolean) -> Unit){
+            val apiService = APIService.getInstance(context)?.getTasksAPI()
+            apiService?.createTask(task)?.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val statusCode = response.code()
+                    if (statusCode == 201){
+                        callback(true)
+                    }
+                    else{
+                        callback(false)
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    callback(false)
+                }
+            })
         }
     }
 }

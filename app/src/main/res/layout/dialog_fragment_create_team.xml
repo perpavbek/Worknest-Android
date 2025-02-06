@@ -78,8 +78,8 @@
                         android:textAlignment="textStart"
                         android:textSize="20sp" />
 
-                    <TextView
-                        android:id="@+id/tw_project"
+                    <AutoCompleteTextView
+                        android:id="@+id/actw_project"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/element_background_shape"
@@ -97,7 +97,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="30dp"
+                    android:layout_marginBottom="10dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -109,13 +109,44 @@
                         android:textAlignment="textStart"
                         android:textSize="20sp" />
 
-                    <TextView
-                        android:id="@+id/tw_lead"
+                    <AutoCompleteTextView
+                        android:id="@+id/actw_lead"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/element_background_shape"
                         android:fontFamily="@font/konkhmer_sleokchher"
                         android:hint="Team Lead"
+                        android:lines="1"
+                        android:paddingStart="20dp"
+                        android:paddingTop="15dp"
+                        android:paddingEnd="20dp"
+                        android:paddingBottom="15dp"
+                        android:textAlignment="textStart"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/konkhmer_sleokchher"
+                        android:lines="1"
+                        android:text="Add Team Member"
+                        android:textAlignment="textStart"
+                        android:textSize="20sp" />
+
+                    <AutoCompleteTextView
+                        android:id="@+id/actw_member"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/element_background_shape"
+                        android:fontFamily="@font/konkhmer_sleokchher"
+                        android:hint="Team Member"
                         android:lines="1"
                         android:paddingStart="20dp"
                         android:paddingTop="15dp"
