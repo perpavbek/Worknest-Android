@@ -32,24 +32,9 @@ class CreateTeamDialogFragment : DialogFragment() {
     private lateinit var actwLead: AutoCompleteTextView
     private lateinit var actwMember: AutoCompleteTextView
     private lateinit var teamMembers: RecyclerView
-
-    private var team: Team? = null
-    private var teamRequest: TeamRequest.Builder = TeamRequest.Builder()
+    private var team: TeamRequest.Builder = TeamRequest.Builder()
     private var projects: MutableList<Project> = mutableListOf()
-
-    companion object {
-        private const val ARG_TEAM = "arg_team"
-
-        fun newInstance(team: Team? = null): CreateTeamDialogFragment {
-            val fragment = CreateTeamDialogFragment()
-            val args = Bundle()
-            if (team != null) {
-                args.putParcelable(ARG_TEAM, team)
-            }
-            fragment.arguments = args
-            return fragment
-        }
-    }
+    private var projectNames: List<String> = listOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,62 +52,112 @@ class CreateTeamDialogFragment : DialogFragment() {
         actwLead.threshold = 1
         actwProject.threshold = 0
 
-        // Загружаем проекты для выбора
-        ProjectService.fetchProjects(requireContext()) { fetchedProjects ->
-            fetchedProjects?.let {
-                projects = it.toMutableList()
-                val projectNames = it.mapNotNull { project -> project.name }
-                actwProject.setAdapter(
-                    ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, projectNames)
-                )
+        ProjectService.fetchProjects(requireContext()){ fetchedProjects ->
+            if(fetchedProjects != null){
+                projects = fetchedProjects
+                projectNames = fetchedProjects.map { it.name!! }
+                val projectAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, projectNames)
+                actwProject.setAdapter(projectAdapter)
             }
         }
-
-        // Проверяем, передана ли команда
-        team = arguments?.getParcelable(ARG_TEAM)
-        team?.let { setTeamData(it) }
-
-        etName.addTextChangedListener(object : TextWatcher {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                teamRequest.name(s.toString())
+        etName.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable?) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (!s.isNullOrEmpty()) {
+                    team.name(s.toString())
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
         })
 
-        actwLead.addTextChangedListener(createUserSearchWatcher(actwLead))
-        actwMember.addTextChangedListener(createUserSearchWatcher(actwMember))
+        actwLead.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (!s.isNullOrEmpty()) {
+                    UserService.searchUser(requireContext(), s.toString()){ users ->
+                        var userNames: List<String> = listOf()
+                        if(users.isNotEmpty()){
+                            userNames = users.map { it.username!! }
+                        }
+                        var usersAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, userNames)
+                        actwLead.setAdapter(usersAdapter)
+                    }
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
+        actwMember.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (!s.isNullOrEmpty()) {
+                    UserService.searchUser(requireContext(), s.toString()){ users ->
+                        var userNames: List<String> = listOf()
+                        if(users.isNotEmpty()){
+                            userNames = users.map { it.username!! }
+                        }
+                        var usersAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, userNames)
+                        actwMember.setAdapter(usersAdapter)
+                    }
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
 
         actwLead.setOnItemClickListener { parent, _, position, _ ->
             val selectedName = parent.getItemAtPosition(position) as String
-            setUserAsLead(selectedName)
-        }
-
-        actwMember.setOnItemClickListener { parent, _, position, _ ->
-            val selectedName = parent.getItemAtPosition(position) as String
-            addUserToTeam(selectedName)
-        }
-
-        actwProject.setOnItemClickListener { parent, _, position, _ ->
-            val selectedName = parent.getItemAtPosition(position) as String
-            projects.find { it.name == selectedName }?.let {
-                teamRequest.projectId(it.projectId)
+            UserService.getUserByUsername(requireContext(), selectedName){ user ->
+                if(user != null){
+                    if(user.userId != null){
+                        team.lead(user.userId!!)
+                        team.addMember(user.userId!!)
+                    }
+                }
             }
         }
-
-        createBtn.setOnClickListener {
-            if (teamRequest.isFilled()) {
-                if (team == null) {
-                    createTeam()
-                } else {
-                    updateTeam()
+        actwMember.setOnItemClickListener { parent, _, position, _ ->
+            val selectedName = parent.getItemAtPosition(position) as String
+            UserService.getUserByUsername(requireContext(), selectedName){ user ->
+                if(user != null){
+                    if(user.userId != null){
+                        team.addMember(user.userId!!)
+                    }
                 }
-            } else {
+            }
+        }
+        actwProject.setOnItemClickListener { parent, _, position, _ ->
+            val selectedName = parent.getItemAtPosition(position) as String
+            val selectedProject = projects.find { it.name == selectedName }
+            if (selectedProject != null){
+                team.projectId(selectedProject.projectId)
+            }
+        }
+        createBtn.setOnClickListener {
+            if(team.isFilled()){
+                TeamService.createTeam(team.build(), requireContext()){ isCreated ->
+                    if(isCreated){
+                        dismiss()
+                    }
+                    else{
+                        Toast.makeText(requireContext(), "Team Creating Error", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            else{
                 Toast.makeText(requireContext(), "Fill All Labels", Toast.LENGTH_SHORT).show()
             }
         }
-
         return view
     }
 
@@ -133,77 +168,9 @@ class CreateTeamDialogFragment : DialogFragment() {
         dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
-    private fun setTeamData(team: Team) {
-        etName.setText(team.name)
-        actwProject.setText(team.project?.name ?: "")
-        actwLead.setText(team.lead?.username ?: "")
-
-        team.members?.forEach { member ->
-            actwMember.setText(member.username ?: "", false)
-        }
-
-        teamRequest.apply {
-            name(team.name)
-            lead(team.lead?.userId ?: "")
-            projectId(team.project?.projectId ?: "")
-            team.members?.mapNotNull { it.userId }?.forEach { addMember(it) }
-        }
-
-        createBtn.text = "Update"
-    }
-
-    private fun createTeam() {
-        TeamService.createTeam(teamRequest.build(), requireContext()) { isCreated ->
-            if (isCreated) {
-                dismiss()
-            } else {
-                Toast.makeText(requireContext(), "Error creating team", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun updateTeam() {
-        team?.teamId?.let { teamId ->
-            TeamService.updateTeam(teamId, teamRequest.build(), requireContext()) { isUpdated ->
-                if (isUpdated) {
-                    dismiss()
-                } else {
-                    Toast.makeText(requireContext(), "Error updating team", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-
-    private fun setUserAsLead(username: String) {
-        UserService.getUserByUsername(requireContext(), username) { user ->
-            user?.userId?.let {
-                teamRequest.lead(it)
-                teamRequest.addMember(it)
-            }
-        }
-    }
-
-    private fun addUserToTeam(username: String) {
-        UserService.getUserByUsername(requireContext(), username) { user ->
-            user?.userId?.let { teamRequest.addMember(it) }
-        }
-    }
-
-    private fun createUserSearchWatcher(autoCompleteTextView: AutoCompleteTextView): TextWatcher {
-        return object : TextWatcher {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (!s.isNullOrEmpty()) {
-                    UserService.searchUser(requireContext(), s.toString()) { users ->
-                        val userNames = users.mapNotNull { it.username }
-                        autoCompleteTextView.setAdapter(
-                            ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, userNames)
-                        )
-                    }
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable?) {}
+    companion object {
+        fun newInstance(): CreateTeamDialogFragment {
+            return CreateTeamDialogFragment()
         }
     }
 }
