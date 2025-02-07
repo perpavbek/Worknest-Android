@@ -29,17 +29,26 @@ class PersistentCookieJar(context: Context) : CookieJar {
 
     private fun loadCookiesFromPrefs(host: String): List<Cookie> {
         val cookieStrings = sharedPreferences.getStringSet(host, emptySet()) ?: emptySet()
-        return cookieStrings.mapNotNull { Cookie.parse(HttpUrl.Builder().scheme("http").host(host).build(), it) }
+        val cookies = mutableListOf<Cookie>()
+
+        val httpUrl = HttpUrl.Builder().scheme("http").host(host).build()
+        cookieStrings.forEach { cookieString ->
+            Cookie.parse(httpUrl, cookieString)?.let { cookies.add(it) }
+        }
+
+        return cookies
     }
 
     fun getTokenFromCookies(): String? {
-        val token = cookieStore.values.flatten().find { it.name() == "refresh" }?.value()
-        if (token != null) return token
+        cookieStore.values.flatten().forEach { cookie ->
+            if (cookie.name() == "refresh") return cookie.value()
+        }
 
-        sharedPreferences.all.forEach { (_, value) ->
+        sharedPreferences.all.forEach { (host, value) ->
             if (value is Set<*>) {
                 value.forEach { cookieString ->
-                    val cookie = Cookie.parse(HttpUrl.Builder().scheme("http").host("localhost").build(), cookieString.toString())
+                    val httpUrl = HttpUrl.Builder().scheme("http").host(host).build()
+                    val cookie = Cookie.parse(httpUrl, cookieString.toString())
                     if (cookie?.name() == "refresh") {
                         return cookie.value()
                     }
@@ -48,6 +57,7 @@ class PersistentCookieJar(context: Context) : CookieJar {
         }
         return null
     }
+
 
     fun clearCookies() {
         sharedPreferences.edit().clear().apply()

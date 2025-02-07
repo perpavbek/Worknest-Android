@@ -1,7 +1,8 @@
 package com.study.worknest.adapters
 
 import android.annotation.SuppressLint
-import android.icu.text.SimpleDateFormat
+import android.app.AlertDialog
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +11,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.study.worknest.R
 import com.study.worknest.data.Task
-import java.util.Date
-import java.util.Locale
 
 class TaskAdapter(
     private var tasks: MutableList<Task>?
@@ -36,34 +35,64 @@ class TaskAdapter(
         holder.taskName.text = task?.name
         holder.taskDescription.text = task?.description
         holder.taskDeadline.text = "Deadline: " + task?.deadline
-        when(task?.priority){
-            "High" -> {
-                val priorityView = inflater.inflate(R.layout.high_priority, holder.statusLayout, false)
-                holder.statusLayout.addView(priorityView)
-            }
-            "Medium" -> {
-                val priorityView = inflater.inflate(R.layout.medium_priority, holder.statusLayout, false)
-                holder.statusLayout.addView(priorityView)
-            }
-            "Low" -> {
-                val priorityView = inflater.inflate(R.layout.low_priority, holder.statusLayout, false)
-                holder.statusLayout.addView(priorityView)
+
+        holder.statusLayout.removeAllViews()
+
+        val priorityView = when (task?.priority) {
+            "High" -> inflater.inflate(R.layout.high_priority, holder.statusLayout, false)
+            "Medium" -> inflater.inflate(R.layout.medium_priority, holder.statusLayout, false)
+            "Low" -> inflater.inflate(R.layout.low_priority, holder.statusLayout, false)
+            else -> null
+        }
+        priorityView?.let {
+            holder.statusLayout.addView(it)
+            it.setOnClickListener {
+                showPriorityDialog(holder.itemView.context, task!!, position)
             }
         }
-        when(task?.status){
-            "To Do" -> {
-                val statusView = inflater.inflate(R.layout.status_to_do, holder.statusLayout, false)
-                holder.statusLayout.addView(statusView)
-            }
-            "In Progress" -> {
-                val statusView = inflater.inflate(R.layout.status_in_progress, holder.statusLayout, false)
-                holder.statusLayout.addView(statusView)
-            }
-            "Completed" -> {
-                val statusView = inflater.inflate(R.layout.status_done, holder.statusLayout, false)
-                holder.statusLayout.addView(statusView)
+
+        val statusView = when (task?.status) {
+            "To Do" -> inflater.inflate(R.layout.status_to_do, holder.statusLayout, false)
+            "In Progress" -> inflater.inflate(R.layout.status_in_progress, holder.statusLayout, false)
+            "Completed" -> inflater.inflate(R.layout.status_completed, holder.statusLayout, false)
+            else -> null
+        }
+        statusView?.let {
+            holder.statusLayout.addView(it)
+            it.setOnClickListener {
+                showStatusDialog(holder.itemView.context, task!!, position)
             }
         }
+    }
+
+    private fun showPriorityDialog(context: Context, task: Task, position: Int) {
+        val priorities = arrayOf("High", "Medium", "Low")
+        val currentPriorityIndex = priorities.indexOf(task.priority)
+
+        AlertDialog.Builder(context)
+            .setTitle("Choose Priority")
+            .setSingleChoiceItems(priorities, currentPriorityIndex) { dialog, which ->
+                task.priority = priorities[which]
+                //updateTaskOnServer(task, position)
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun showStatusDialog(context: Context, task: Task, position: Int) {
+        val statuses = arrayOf("To Do", "In Progress", "Completed")
+        val currentPriorityIndex = statuses.indexOf(task.priority)
+
+        AlertDialog.Builder(context)
+            .setTitle("Choose Status")
+            .setSingleChoiceItems(statuses, currentPriorityIndex) { dialog, which ->
+                task.status = statuses[which]
+                //updateTaskOnServer(task, position)
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     override fun getItemCount(): Int {

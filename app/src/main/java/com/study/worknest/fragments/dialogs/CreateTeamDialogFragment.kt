@@ -14,11 +14,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.study.worknest.API.services.ProjectService
 import com.study.worknest.API.services.TeamService
 import com.study.worknest.API.services.UserService
 import com.study.worknest.R
+import com.study.worknest.adapters.TeamMembersAdapter
 import com.study.worknest.data.Project
 import com.study.worknest.data.Team
 import com.study.worknest.data.User
@@ -32,6 +34,7 @@ class CreateTeamDialogFragment : DialogFragment() {
     private lateinit var actwLead: AutoCompleteTextView
     private lateinit var actwMember: AutoCompleteTextView
     private lateinit var teamMembers: RecyclerView
+    private var teamMembersList: MutableList<User> = mutableListOf()
     private var team: TeamRequest.Builder = TeamRequest.Builder()
     private var projects: MutableList<Project> = mutableListOf()
     private var projectNames: List<String> = listOf()
@@ -48,7 +51,8 @@ class CreateTeamDialogFragment : DialogFragment() {
         actwLead = view.findViewById(R.id.actw_lead)
         actwMember = view.findViewById(R.id.actw_member)
         teamMembers = view.findViewById(R.id.team_members)
-
+        teamMembers.layoutManager = LinearLayoutManager(requireContext())
+        teamMembers.isNestedScrollingEnabled = false
         actwLead.threshold = 1
         actwProject.threshold = 0
 
@@ -85,7 +89,7 @@ class CreateTeamDialogFragment : DialogFragment() {
                         if(users.isNotEmpty()){
                             userNames = users.map { it.username!! }
                         }
-                        var usersAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, userNames)
+                        val usersAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, userNames)
                         actwLead.setAdapter(usersAdapter)
                     }
                 }
@@ -105,7 +109,7 @@ class CreateTeamDialogFragment : DialogFragment() {
                         if(users.isNotEmpty()){
                             userNames = users.map { it.username!! }
                         }
-                        var usersAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, userNames)
+                        val usersAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, userNames)
                         actwMember.setAdapter(usersAdapter)
                     }
                 }
@@ -122,6 +126,9 @@ class CreateTeamDialogFragment : DialogFragment() {
                     if(user.userId != null){
                         team.lead(user.userId!!)
                         team.addMember(user.userId!!)
+                        teamMembersList.add(user)
+                        val teamMembersAdapter = TeamMembersAdapter(teamMembersList)
+                        teamMembers.adapter = teamMembersAdapter
                     }
                 }
             }
@@ -132,6 +139,9 @@ class CreateTeamDialogFragment : DialogFragment() {
                 if(user != null){
                     if(user.userId != null){
                         team.addMember(user.userId!!)
+                        teamMembersList.add(user)
+                        val teamMembersAdapter = TeamMembersAdapter(teamMembersList)
+                        teamMembers.adapter = teamMembersAdapter
                     }
                 }
             }

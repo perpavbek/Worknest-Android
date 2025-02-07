@@ -1,5 +1,6 @@
 package com.study.worknest.fragments.dialogs
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -52,6 +53,7 @@ class CreateTaskDialogFragment : DialogFragment() {
     private var task: TaskRequest.Builder = TaskRequest.Builder()
     private var priorities = arrayOf("Low", "Medium", "High")
     private var statuses = arrayOf("To Do", "In Progress", "Completed")
+    @SuppressLint("NewApi")
     private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     @RequiresApi(Build.VERSION_CODES.O)
