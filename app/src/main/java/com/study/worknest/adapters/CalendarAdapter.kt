@@ -38,10 +38,18 @@ class CalendarAdapter(
         holder.day.text = date.dayOfMonth.toString()
         holder.weekDay.text = date.dayOfWeek.toString()
         holder.month.text = date.month.toString()
-        holder.layout.alpha = if (position == selectedDate) 1.0f else 0.5f
+
+        val targetAlpha = if (position == selectedDate) 1.0f else 0.5f
+
+        holder.layout.animate()
+            .alpha(targetAlpha)
+            .setDuration(300)
+            .start()
 
         holder.layout.setOnClickListener {
+            val previousSelected = selectedDate
             selectedDate = position
+            notifyItemChanged(previousSelected!!)
             notifyDataSetChanged()
             onClickDate(date)
         }

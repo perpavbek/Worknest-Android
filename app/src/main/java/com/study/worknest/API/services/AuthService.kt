@@ -5,6 +5,7 @@ import com.study.worknest.API.APIService
 import com.study.worknest.data.auth.LoginData
 import com.study.worknest.data.auth.OTPData
 import com.study.worknest.data.auth.TokenResponse
+import com.study.worknest.data.requests.SignUpRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -44,6 +45,25 @@ class AuthService private constructor() {
 
                 override fun onFailure(call: Call<TokenResponse?>, t: Throwable) {
                     callback(null)
+                }
+            })
+        }
+
+        fun signUp(signUpRequest: SignUpRequest, context: Context, callback: (Boolean) -> Unit){
+            val apiService = APIService.getInstance(context)?.getAuthAPI()
+            apiService?.signUp(signUpRequest)?.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val statusCode = response.code()
+                    if (statusCode == 201){
+                        callback(true)
+                    }
+                    else{
+                        callback(false)
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    callback(false)
                 }
             })
         }

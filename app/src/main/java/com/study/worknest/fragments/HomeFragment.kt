@@ -74,8 +74,13 @@ class HomeFragment : Fragment() {
             if (fetchedTasks.isNullOrEmpty()) {
                 showToast("No tasks for selected date")
             } else {
-                taskAdapter = TaskAdapter(fetchedTasks)
+                taskAdapter = TaskAdapter(fetchedTasks){
+                    refreshTasks()
+                }
                 taskList.adapter = taskAdapter
+                val animation = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_animation_fade_in)
+                taskList.layoutAnimation = animation
+                taskList.scheduleLayoutAnimation()
             }
         }
     }
@@ -84,6 +89,9 @@ class HomeFragment : Fragment() {
         Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
+    fun refreshTasks() {
+        selectedDate?.let { loadTasksForDate(it) }
+    }
     @SuppressLint("NewApi")
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

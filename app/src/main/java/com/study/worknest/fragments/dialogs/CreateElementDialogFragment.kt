@@ -7,15 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import com.study.worknest.R
 
 class CreateElementDialogFragment : DialogFragment() {
 
-    private lateinit var addProject: Button
-    private lateinit var addTeam: Button
-    private lateinit var addTask: Button
+    private lateinit var addProject: TextView
+    private lateinit var addTeam: TextView
+    private lateinit var addTask: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

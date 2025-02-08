@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,6 +36,9 @@ class ProjectsFragment: Fragment() {
                 if (!fetchedProjects.isNullOrEmpty()) {
                     projectAdapter = ProjectAdapter(fetchedProjects)
                     projectList.adapter = projectAdapter
+                    val animation = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_animation_fade_in)
+                    projectList.layoutAnimation = animation
+                    projectList.scheduleLayoutAnimation()
                 } else {
                     Toast.makeText(requireContext(), "You don't have tasks", Toast.LENGTH_SHORT).show()
                 }

@@ -8,12 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.study.worknest.API.services.TaskService
 import com.study.worknest.R
 import com.study.worknest.data.Task
+import com.study.worknest.fragments.HomeFragment
 
 class TaskAdapter(
-    private var tasks: MutableList<Task>?
+    private var tasks: MutableList<Task>,
+    private val onTaskUpdated: () -> Unit
 ) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     class TaskViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -72,9 +76,20 @@ class TaskAdapter(
         AlertDialog.Builder(context)
             .setTitle("Choose Priority")
             .setSingleChoiceItems(priorities, currentPriorityIndex) { dialog, which ->
-                task.priority = priorities[which]
-                //updateTaskOnServer(task, position)
-                dialog.dismiss()
+                val newPriority = priorities[which]
+                if (task.priority != newPriority) {
+                    task.priority = newPriority
+                    updateTaskOnServer(context, task) { isUpdated ->
+                        if (isUpdated) {
+                            onTaskUpdated()
+                            dialog.dismiss()
+                        } else {
+                            Toast.makeText(context, "Failed to update priority", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    dialog.dismiss()
+                }
             }
             .setNegativeButton("Cancel", null)
             .show()
@@ -82,17 +97,34 @@ class TaskAdapter(
 
     private fun showStatusDialog(context: Context, task: Task, position: Int) {
         val statuses = arrayOf("To Do", "In Progress", "Completed")
-        val currentPriorityIndex = statuses.indexOf(task.priority)
+        val currentPriorityIndex = statuses.indexOf(task.status)
 
         AlertDialog.Builder(context)
             .setTitle("Choose Status")
             .setSingleChoiceItems(statuses, currentPriorityIndex) { dialog, which ->
-                task.status = statuses[which]
-                //updateTaskOnServer(task, position)
-                dialog.dismiss()
+                val newStatus = statuses[which]
+                if (task.status != newStatus) {
+                    task.status = newStatus
+                    updateTaskOnServer(context, task) { isUpdated ->
+                        if (isUpdated) {
+                            onTaskUpdated()
+                            dialog.dismiss()
+                        } else {
+                            Toast.makeText(context, "Failed to update status", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } else {
+                    dialog.dismiss()
+                }
             }
             .setNegativeButton("Cancel", null)
             .show()
+    }
+
+    private fun updateTaskOnServer(context: Context, task: Task, callback: (Boolean) -> Unit) {
+        TaskService.updateTaskById(task, task.taskId!!, context) { isUpdated ->
+            callback(isUpdated)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -103,4 +135,5 @@ class TaskAdapter(
             return 0
         }
     }
+
 }

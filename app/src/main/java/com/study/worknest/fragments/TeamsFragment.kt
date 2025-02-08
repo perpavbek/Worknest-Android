@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +43,9 @@ class TeamsFragment: Fragment() {
                             teamsMap?.set(team, project!!)
                             teamAdapter = TeamAdapter(teamsMap?.keys?.toList(), teamsMap)
                             teamList.adapter = teamAdapter
+                            val animation = AnimationUtils.loadLayoutAnimation(requireContext(), R.anim.layout_animation_fade_in)
+                            teamList.layoutAnimation = animation
+                            teamList.scheduleLayoutAnimation()
                         }
                     }
                 } else {

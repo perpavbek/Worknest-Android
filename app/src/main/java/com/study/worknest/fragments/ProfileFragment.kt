@@ -15,9 +15,9 @@ import com.study.worknest.utils.SharedPreferencesManager
 class ProfileFragment: Fragment() {
     private var userId: Int? = null
     private lateinit var twUsername: TextView
-    private lateinit var etUsername: EditText
-    private lateinit var etEmail: EditText
-    private lateinit var etPhoneNumber: EditText
+    private lateinit var etUsername: TextView
+    private lateinit var etEmail: TextView
+    private lateinit var etPhoneNumber: TextView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

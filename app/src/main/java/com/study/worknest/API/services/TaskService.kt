@@ -69,5 +69,23 @@ class TaskService private constructor() {
                 }
             })
         }
+        fun updateTaskById(task: Task, taskId: Int, context: Context, callback: (Boolean) -> Unit){
+            val apiService = APIService.getInstance(context)?.getTasksAPI()
+            apiService?.updateTaskById(task, taskId)?.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    val statusCode = response.code()
+                    if (statusCode == 200){
+                        callback(true)
+                    }
+                    else{
+                        callback(false)
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    callback(false)
+                }
+            })
+        }
     }
 }

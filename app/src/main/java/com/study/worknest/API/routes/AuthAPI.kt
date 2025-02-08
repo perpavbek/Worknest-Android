@@ -3,6 +3,7 @@ package com.study.worknest.API.routes
 import com.study.worknest.data.auth.LoginData
 import com.study.worknest.data.auth.OTPData
 import com.study.worknest.data.auth.TokenResponse
+import com.study.worknest.data.requests.SignUpRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -19,4 +20,7 @@ interface AuthAPI {
 
     @POST("auth/refresh")
     fun refreshToken(): Call<TokenResponse?>
+
+    @POST("auth/sign_up")
+    fun signUp(@Body signUpRequest: SignUpRequest): Call<ResponseBody>
 }
