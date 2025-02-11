@@ -20,7 +20,6 @@ class MainActivity : AppCompatActivity() {
 
         val token = APIService.getInstance(this)?.getCookieJar()?.getTokenFromCookies()
         if (token.isNullOrEmpty()) {
-            Toast.makeText(this, "Please log in again", Toast.LENGTH_SHORT).show()
             startActivity(Intent(this, AuthActivity::class.java))
             finish()
         }

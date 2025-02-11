@@ -1,15 +1,19 @@
 package com.study.worknest.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.study.worknest.API.APIService
 import com.study.worknest.API.services.UserService
 import com.study.worknest.R
+import com.study.worknest.activities.AuthActivity
 import com.study.worknest.utils.SharedPreferencesManager
 
 class ProfileFragment: Fragment() {
@@ -18,6 +22,8 @@ class ProfileFragment: Fragment() {
     private lateinit var etUsername: TextView
     private lateinit var etEmail: TextView
     private lateinit var etPhoneNumber: TextView
+    private lateinit var logOutButton: Button;
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,6 +39,7 @@ class ProfileFragment: Fragment() {
         etUsername = view.findViewById((R.id.et_username))
         etEmail = view.findViewById((R.id.et_email))
         etPhoneNumber = view.findViewById((R.id.et_phone_number))
+        logOutButton = view.findViewById(R.id.log_out_button)
 
         userId?.let { id ->
             UserService.getUserById(requireContext(), id) { user ->
@@ -47,6 +54,12 @@ class ProfileFragment: Fragment() {
                     }
                 }
             }
+        }
+        logOutButton.setOnClickListener{
+            SharedPreferencesManager.getInstance(requireContext()).clearData()
+            APIService.getInstance(requireContext())?.getCookieJar()?.clearCookies()
+            startActivity(Intent(requireContext(), AuthActivity::class.java))
+            activity?.finish()
         }
     }
 }

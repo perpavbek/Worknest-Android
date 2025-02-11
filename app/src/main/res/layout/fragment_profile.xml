@@ -167,6 +167,14 @@
                         app:layout_constraintTop_toTopOf="parent"
                         android:background="@drawable/element_background_shape"/>
                 </LinearLayout>
+                <Button
+                    android:id="@+id/log_out_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Log Out"
+                    android:background="@drawable/element_background_shape"
+                    android:layout_marginTop="30dp"
+                    />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
